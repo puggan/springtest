@@ -1,0 +1,5 @@
+html, body, table { max-width: 95vw; }
+#t {margin: 5em; border: solid #000 1px; max-width: calc(100% - 11em); }
+#t th { text-align: left; }
+#t tr { background: #fff; }
+#t tbody tr:nth-child(odd) { background: #eee; }
