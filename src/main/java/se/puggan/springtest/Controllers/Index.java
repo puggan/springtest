@@ -1,6 +1,5 @@
-package se.puggan.springtest;
+package se.puggan.springtest.Controllers;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -135,10 +134,5 @@ public class Index
         //</editor-fold>
 
         return json;
-    }
-
-    public static void main(String[] args)
-    {
-        SpringApplication.run(new Class[]{Index.class}, args);
     }
 }
