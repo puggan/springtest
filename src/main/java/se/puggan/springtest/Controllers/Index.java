@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import se.puggan.springtest.Json.DTResponse;
 import se.puggan.springtest.Models.Row;
+import se.puggan.springtest.Models.User;
+import se.puggan.springtest.Models.UserAuth;
 import se.puggan.springtest.Repositories.UserRepository;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Controller
 @EnableAutoConfiguration
@@ -79,7 +82,12 @@ public class Index
         HttpServletRequest request
     )
     {
-        if (!username.equals("foo") || !password.equals("bar"))
+        Optional<User> ou = users.byUsername(username);
+        boolean ok = false;
+        if(!ou.isEmpty()) {
+            ok = ou.get().auth(UserAuth.PASSWORD, password);
+        }
+        if (!ok)
         {
             response.setStatus(403);
             if (isAjax(request))

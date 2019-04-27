@@ -17,4 +17,10 @@ public class User
 
     @OneToMany //(mappedBy = "bookCategory", cascade = CascadeType.ALL)
     private Set<UserAuth> auths;
+
+    public boolean auth(String type, String Secret)
+    {
+        // TODO
+        return true;
+    }
 }
