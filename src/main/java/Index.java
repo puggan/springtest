@@ -41,5 +41,3 @@ public class Index
         SpringApplication.run(new Class[]{Index.class}, args);
     }
 }
-
-
