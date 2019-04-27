@@ -56,6 +56,17 @@ public class Index
         return content;
     }
 
+    @RequestMapping("/logout")
+    @ResponseBody
+    public String logout(
+        HttpServletResponse response,
+        HttpServletRequest request
+    )
+    {
+        response.addCookie(new Cookie("session_id", ""));
+        return redirect("/", "{\"ok\": true}", response, request);
+    }
+
     @RequestMapping("/list")
     @ResponseBody
     public DTResponse<Row> list(@RequestParam(defaultValue = "0") int draw, @RequestParam(name="search[value]", defaultValue = "") String search)
