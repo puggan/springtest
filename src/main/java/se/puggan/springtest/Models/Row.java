@@ -1,3 +1,5 @@
+package se.puggan.springtest.Models;
+
 public class Row
 {
     public String a;
