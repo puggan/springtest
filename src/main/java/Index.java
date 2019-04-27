@@ -67,6 +67,29 @@ public class Index
         return redirect("/", "{\"ok\": true}", response, request);
     }
 
+    @RequestMapping("/login")
+    @ResponseBody
+    public String login(
+        @RequestParam(defaultValue = "") String username,
+        @RequestParam(defaultValue = "") String password,
+        HttpServletResponse response,
+        HttpServletRequest request
+    )
+    {
+        if (!username.equals("foo") || !password.equals("bar"))
+        {
+            response.setStatus(403);
+            if (isAjax(request))
+            {
+                return "{\"ok\": false}";
+            }
+            return "403 Permission Denied";
+        }
+
+        response.addCookie(new Cookie("session_id", "qwerty12345"));
+        return redirect("/", "{\"ok\": true}", response, request);
+    }
+
     @RequestMapping("/list")
     @ResponseBody
     public DTResponse<Row> list(@RequestParam(defaultValue = "0") int draw, @RequestParam(name="search[value]", defaultValue = "") String search)
