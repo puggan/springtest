@@ -1,5 +1,6 @@
 package se.puggan.springtest.Controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import se.puggan.springtest.Json.DTResponse;
 import se.puggan.springtest.Models.Row;
+import se.puggan.springtest.Repositories.UserRepository;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,9 @@ import java.util.ArrayList;
 @EnableAutoConfiguration
 public class Index
 {
+    @Autowired
+    private UserRepository users;
+
     private boolean guest(
         HttpServletRequest request
     ) {
