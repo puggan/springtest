@@ -92,26 +92,49 @@ public class Index
 
     @RequestMapping("/list")
     @ResponseBody
-    public DTResponse<Row> list(@RequestParam(defaultValue = "0") int draw, @RequestParam(name="search[value]", defaultValue = "") String search)
+    public DTResponse<Row> list(
+        @RequestParam(defaultValue = "0") int draw,
+        @RequestParam(name="search[value]", defaultValue = "") String search,
+        HttpServletResponse response,
+        HttpServletRequest request
+    )
     {
+        DTResponse<Row> json = new DTResponse<>();
+
+        //<editor-fold desc="Auth?">
+        if (guest(request))
+        {
+            response.setStatus(403);
+            json.ok = false;
+            return json;
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Exemple Data">
         ArrayList<Row> data = new ArrayList<>();
         data.add(new Row("Anna", "Andersson"));
         data.add(new Row("Bertil", "Bengtsson"));
         data.add(new Row("Carl", "Carlberg"));
         data.add(new Row("David", "Dahlman"));
+        //</editor-fold>
 
-        DTResponse<Row> json = new DTResponse<>();
         json.draw = draw;
+
+        //<editor-fold desc="Filter">
         for (Row r : data)
         {
-            if (search == "" || r.a.contains(search) || r.b.contains(search))
+            if (search.equals("") || r.a.contains(search) || r.b.contains(search))
             {
                 json.data.add(r);
             }
         }
+        //</editor-fold>
 
+        //<editor-fold desc="Count">
         json.recordsTotal = data.size();
         json.recordsFiltered = json.data.size();
+        //</editor-fold>
+
         return json;
     }
 
