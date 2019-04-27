@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.Set;
 
 @Entity
 public class User
@@ -12,4 +14,7 @@ public class User
     public Integer id;
     public String username;
     public String displayname;
+
+    @OneToMany //(mappedBy = "bookCategory", cascade = CascadeType.ALL)
+    private Set<UserAuth> auths;
 }
