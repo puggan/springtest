@@ -10,15 +10,37 @@
         <link rel="stylesheet" href="/css/index.css" />
         <script defer src="/js/index.js"></script>
     </head>
-    <body>
+    <body class="loading">
         <h1>Spring Test</h1>
-        <table id="t">
-            <thead>
-                <tr>
-                    <th data-data="a">A</th>
-                    <th data-data="b">B</th>
-                </tr>
-            </thead>
-        </table>
+        <div id="loading-spinner">
+            <img src="/img/spinner.svg" alt="Waiting / Loading" />
+        </div>
+        <form id="login" method="post" action="/login">
+            <fieldset>
+                <legend>Login</legend>
+                <label>
+                    <span>Username:</span><br />
+                    <input type="text" name="username" value="foo" /><br />
+                </label>
+                <label>
+                    <span>Password:</span><br />
+                    <input type="password" name="password" value="bar" /><br />
+                </label>
+                <label>
+                    <input type="submit" value="login" /><br />
+                </label>
+            </fieldset>
+        </form>
+        <div id="content">
+            <table id="t">
+                <thead>
+                    <tr>
+                        <th data-data="a">A</th>
+                        <th data-data="b">B</th>
+                    </tr>
+                </thead>
+            </table>
+            <p id="logout"><a href="/logout">Log out</a></p>
+        </div>
     </body>
 </html>
