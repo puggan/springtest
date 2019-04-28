@@ -88,8 +88,10 @@ public class Index
     {
         Optional<User> ou = usersquery.byUsername(username);
         boolean ok = false;
-        if(!ou.isEmpty()) {
-            ok = ou.get().auth(UserAuth.PASSWORD, password);
+        if(ou.isPresent()) {
+            User user = ou.get();
+            Optional<UserAuth> auth = authquery.byType(user, UserAuth.PASSWORD);
+            ok = auth.isPresent() && auth.get().verify(password);
         }
         if (!ok)
         {

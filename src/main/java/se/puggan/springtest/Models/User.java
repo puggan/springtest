@@ -17,10 +17,4 @@ public class User
 
     @OneToMany
     private Set<UserAuth> auths;
-
-    public boolean auth(String type, String Secret)
-    {
-        // TODO
-        return true;
-    }
 }
