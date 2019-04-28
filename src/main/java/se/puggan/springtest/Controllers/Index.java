@@ -17,7 +17,6 @@ import se.puggan.springtest.Repositories.UserRepository;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -131,24 +130,17 @@ public class Index
         }
         //</editor-fold>
 
-        List<Name> data = namequery.all();
-
         json.draw = draw;
+        json.recordsTotal = (int)namequery.count();
 
-        //<editor-fold desc="Filter">
-        for (Name n : data)
-        {
-            if (search.equals("") || n.firstname.contains(search) || n.lastname.contains(search))
-            {
-                json.data.add(n);
-            }
+        if(search.equals("")) {
+            json.data = namequery.all();
+            json.recordsFiltered = json.recordsTotal;
+            return json;
         }
-        //</editor-fold>
 
-        //<editor-fold desc="Count">
-        json.recordsTotal = data.size();
+        json.data = namequery.search("%" + search.replace(" ", "%") + "%");
         json.recordsFiltered = json.data.size();
-        //</editor-fold>
 
         return json;
     }
