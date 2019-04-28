@@ -7,16 +7,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import se.puggan.springtest.Json.DTResponse;
-import se.puggan.springtest.Models.Row;
+import se.puggan.springtest.Models.Name;
 import se.puggan.springtest.Models.User;
 import se.puggan.springtest.Models.UserAuth;
+import se.puggan.springtest.Repositories.NameRepository;
 import se.puggan.springtest.Repositories.UserAuthRepository;
 import se.puggan.springtest.Repositories.UserRepository;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -28,6 +29,9 @@ public class Index
 
     @Autowired
     private UserAuthRepository authquery;
+
+    @Autowired
+    private NameRepository namequery;
 
     private boolean guest(
         HttpServletRequest request
@@ -109,14 +113,14 @@ public class Index
 
     @RequestMapping("/list")
     @ResponseBody
-    public DTResponse<Row> list(
+    public DTResponse<Name> list(
         @RequestParam(defaultValue = "0") int draw,
         @RequestParam(name="search[value]", defaultValue = "") String search,
         HttpServletResponse response,
         HttpServletRequest request
     )
     {
-        DTResponse<Row> json = new DTResponse<>();
+        DTResponse<Name> json = new DTResponse<>();
 
         //<editor-fold desc="Auth?">
         if (guest(request))
@@ -127,22 +131,16 @@ public class Index
         }
         //</editor-fold>
 
-        //<editor-fold desc="Exemple Data">
-        ArrayList<Row> data = new ArrayList<>();
-        data.add(new Row("Anna", "Andersson"));
-        data.add(new Row("Bertil", "Bengtsson"));
-        data.add(new Row("Carl", "Carlberg"));
-        data.add(new Row("David", "Dahlman"));
-        //</editor-fold>
+        List<Name> data = namequery.all();
 
         json.draw = draw;
 
         //<editor-fold desc="Filter">
-        for (Row r : data)
+        for (Name n : data)
         {
-            if (search.equals("") || r.a.contains(search) || r.b.contains(search))
+            if (search.equals("") || n.firstname.contains(search) || n.lastname.contains(search))
             {
-                json.data.add(r);
+                json.data.add(n);
             }
         }
         //</editor-fold>
