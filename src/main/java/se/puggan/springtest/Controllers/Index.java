@@ -10,6 +10,7 @@ import se.puggan.springtest.Json.DTResponse;
 import se.puggan.springtest.Models.Row;
 import se.puggan.springtest.Models.User;
 import se.puggan.springtest.Models.UserAuth;
+import se.puggan.springtest.Repositories.UserAuthRepository;
 import se.puggan.springtest.Repositories.UserRepository;
 
 import javax.servlet.http.Cookie;
@@ -23,7 +24,10 @@ import java.util.Optional;
 public class Index
 {
     @Autowired
-    private UserRepository users;
+    private UserRepository usersquery;
+
+    @Autowired
+    private UserAuthRepository authquery;
 
     private boolean guest(
         HttpServletRequest request
@@ -82,7 +86,7 @@ public class Index
         HttpServletRequest request
     )
     {
-        Optional<User> ou = users.byUsername(username);
+        Optional<User> ou = usersquery.byUsername(username);
         boolean ok = false;
         if(!ou.isEmpty()) {
             ok = ou.get().auth(UserAuth.PASSWORD, password);

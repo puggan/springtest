@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import se.puggan.springtest.Models.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository  extends CrudRepository<User, Integer>
@@ -14,5 +15,5 @@ public interface UserRepository  extends CrudRepository<User, Integer>
     public List<User> all();
 
     @Query("select u from User u where u.username = ?1")
-    public java.util.Optional<User> byUsername(String username);
+    public Optional<User> byUsername(String username);
 }

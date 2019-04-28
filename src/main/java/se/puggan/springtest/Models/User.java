@@ -15,7 +15,7 @@ public class User
     public String username;
     public String displayname;
 
-    @OneToMany //(mappedBy = "bookCategory", cascade = CascadeType.ALL)
+    @OneToMany
     private Set<UserAuth> auths;
 
     public boolean auth(String type, String Secret)
