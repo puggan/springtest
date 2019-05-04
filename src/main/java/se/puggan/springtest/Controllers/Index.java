@@ -3,9 +3,11 @@ package se.puggan.springtest.Controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import se.puggan.springtest.Json.DTResponse;
 import se.puggan.springtest.Models.Name;
 import se.puggan.springtest.Models.User;
@@ -147,5 +149,22 @@ public class Index
     }
 
 
+    @RequestMapping("/name/{id}")
+    //public String name(
+    public ModelAndView name(
+        @PathVariable("id") Integer id
+    ) {
+        ModelAndView view = new ModelAndView("name");
+        Optional<Name> maybeName = namequery.findById(id);
+        view.addObject("id", id);
+        if (maybeName.isPresent())
+        {
+            view.addObject("Name", maybeName.get());
+        }
+        else
+        {
+            view.addObject("Name", new Name());
+        }
+        return view;
     }
 }
