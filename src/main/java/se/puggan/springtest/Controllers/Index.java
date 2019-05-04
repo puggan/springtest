@@ -2,6 +2,8 @@ package se.puggan.springtest.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -117,6 +119,8 @@ public class Index
     @ResponseBody
     public DTResponse<Name> list(
         @RequestParam(defaultValue = "0") int draw,
+        @RequestParam(defaultValue = "0") int start,
+        @RequestParam(defaultValue = "0") int length,
         @RequestParam(name="search[value]", defaultValue = "") String search,
         @RequestParam(name="columns[0][search][value]", defaultValue = "") String firstname,
         @RequestParam(name="columns[1][search][value]", defaultValue = "") String lastname,
@@ -137,14 +141,27 @@ public class Index
 
         json.draw = draw;
         json.recordsTotal = (int)namequery.count();
-        List<Name> names = namequery.maxSearch(
+        if (length > 0)
+        {
+            Page<Name> namePage = namequery.maxSearch(
+                PageRequest.of(start / length, length),
                 "%" + search.replace(" ", "%") + "%",
                 "%" + firstname.replace(" ", "%") + "%",
                 "%" + lastname.replace(" ", "%") + "%"
-        );
-        json.recordsFiltered = names.size();
-        json.data = names;
-
+            );
+            json.recordsFiltered = (int) namePage.getTotalElements();
+            json.data = namePage.getContent();
+        }
+        else
+        {
+            List<Name> names = namequery.maxSearch(
+                    "%" + search.replace(" ", "%") + "%",
+                    "%" + firstname.replace(" ", "%") + "%",
+                    "%" + lastname.replace(" ", "%") + "%"
+            );
+            json.recordsFiltered = names.size();
+            json.data = names;
+        }
         return json;
     }
 
