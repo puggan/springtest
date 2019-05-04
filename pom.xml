@@ -7,7 +7,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>se.puggan</groupId>
 	<artifactId>springtest</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5</version>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
