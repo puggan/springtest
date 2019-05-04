@@ -3,6 +3,7 @@ html, body, table { max-width: 95vw; }
 #t th { text-align: left; }
 #t tr { background: #fff; }
 #t tbody tr:nth-child(odd) { background: #eee; }
+#t tfoot {display: table-header-group; }
 #login { display: none; }
 #loading-spinner { display: none; }
 body.loading #loading-spinner { display: block; text-align: center;}

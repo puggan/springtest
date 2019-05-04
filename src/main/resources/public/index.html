@@ -5,8 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Spring Test</title>
         <script defer src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
-        <script defer src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+        <script defer src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp" crossorigin="anonymous"></script>
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/TypeWatch/3.0.1/jquery.typewatch.min.js" integrity="sha384-xVAThkh+v4XrRGw5I6O76Q7wydBuKJruprW810aEfu+mIVD5fwyJ1xGLUafvMqP0" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha384-9Z9AuAj0Xi0z7WFOSgjjow8EnNY9wPNp925TVLlAyWhvZPsf5Ks23Ex0mxIrWJzJ" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous" />
         <link rel="stylesheet" href="/css/index.css" />
         <script defer src="/js/index.js"></script>
     </head>
@@ -39,6 +41,12 @@
                         <th data-data="lastname">Lastname</th>
                     </tr>
                 </thead>
+                <tfoot>
+                    <tr>
+                        <th><input id="fn_filter" /></th>
+                        <th><input id="ln_filter" /></th>
+                    </tr>
+                </tfoot>
             </table>
             <p id="logout"><a href="/logout">Log out</a></p>
         </div>

@@ -11,11 +11,17 @@ import java.util.List;
 public interface NameRepository extends CrudRepository<Name, Integer>
 {
     @Query("select n from Name n")
-    public List<Name> all();
+    List<Name> all();
 
     @Query(
         value="select n.* from name n where CONCAT(firstname, ' ', lastname) LIKE ?1",
         nativeQuery = true
     )
-    public List<Name> search(String search);
+    List<Name> search(String search);
+
+    @Query(
+        value="select n.* from name n where CONCAT(firstname, ' ', lastname) LIKE ?1 AND firstname LIKE ?2 AND lastname LIKE ?3",
+        nativeQuery = true
+    )
+    List<Name> maxSearch(String search, String firstname, String lastname);
 }

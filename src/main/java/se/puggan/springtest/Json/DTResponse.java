@@ -1,7 +1,6 @@
 package se.puggan.springtest.Json;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DTResponse<T>
 {
@@ -9,7 +8,7 @@ public class DTResponse<T>
     public int draw;
     public int recordsTotal;
     public int recordsFiltered;
-    public List<T> data;
+    public Iterable<T> data;
 
     public DTResponse() {
         data = new ArrayList<>();

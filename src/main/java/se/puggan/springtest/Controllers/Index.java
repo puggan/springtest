@@ -17,6 +17,7 @@ import se.puggan.springtest.Repositories.UserRepository;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -115,6 +116,8 @@ public class Index
     public DTResponse<Name> list(
         @RequestParam(defaultValue = "0") int draw,
         @RequestParam(name="search[value]", defaultValue = "") String search,
+        @RequestParam(name="columns[0][search][value]", defaultValue = "") String firstname,
+        @RequestParam(name="columns[1][search][value]", defaultValue = "") String lastname,
         HttpServletResponse response,
         HttpServletRequest request
     )
@@ -132,16 +135,17 @@ public class Index
 
         json.draw = draw;
         json.recordsTotal = (int)namequery.count();
-
-        if(search.equals("")) {
-            json.data = namequery.all();
-            json.recordsFiltered = json.recordsTotal;
-            return json;
-        }
-
-        json.data = namequery.search("%" + search.replace(" ", "%") + "%");
-        json.recordsFiltered = json.data.size();
+        List<Name> names = namequery.maxSearch(
+                "%" + search.replace(" ", "%") + "%",
+                "%" + firstname.replace(" ", "%") + "%",
+                "%" + lastname.replace(" ", "%") + "%"
+        );
+        json.recordsFiltered = names.size();
+        json.data = names;
 
         return json;
+    }
+
+
     }
 }
