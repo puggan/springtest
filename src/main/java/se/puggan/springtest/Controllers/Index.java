@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,6 @@ import se.puggan.springtest.Repositories.UserRepository;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -124,6 +124,8 @@ public class Index
         @RequestParam(name="search[value]", defaultValue = "") String search,
         @RequestParam(name="columns[0][search][value]", defaultValue = "") String firstname,
         @RequestParam(name="columns[1][search][value]", defaultValue = "") String lastname,
+        @RequestParam(name="order[0][column]", defaultValue = "0") int sortColumn,
+        @RequestParam(name="order[0][dir]", defaultValue = "asc") String sortOrder,
         HttpServletResponse response,
         HttpServletRequest request
     )
@@ -141,27 +143,40 @@ public class Index
 
         json.draw = draw;
         json.recordsTotal = (int)namequery.count();
+
+        //<editor-fold desc="Paging and Sorting">
+        PageRequest options;
+        Sort.Direction direction = Sort.Direction.ASC;
+        if(sortOrder.equals("desc")) {
+            direction = Sort.Direction.DESC;
+        }
+        Sort sort;
+        switch (sortColumn)
+        {
+            case 1:
+                sort = Sort.by(direction, "lastname");
+
+            default:
+                sort = Sort.by(direction, "firstname");
+
+        }
         if (length > 0)
         {
-            Page<Name> namePage = namequery.maxSearch(
-                PageRequest.of(start / length, length),
-                "%" + search.replace(" ", "%") + "%",
-                "%" + firstname.replace(" ", "%") + "%",
-                "%" + lastname.replace(" ", "%") + "%"
-            );
-            json.recordsFiltered = (int) namePage.getTotalElements();
-            json.data = namePage.getContent();
+            options = PageRequest.of(start / length, length, sort);
         }
         else
         {
-            List<Name> names = namequery.maxSearch(
-                    "%" + search.replace(" ", "%") + "%",
-                    "%" + firstname.replace(" ", "%") + "%",
-                    "%" + lastname.replace(" ", "%") + "%"
-            );
-            json.recordsFiltered = names.size();
-            json.data = names;
+            options = PageRequest.of(0, 1 + 2*json.recordsTotal, sort);
         }
+        //</editor-fold>
+
+        Page<Name> namePage = namequery.maxSearch(options,
+                "%" + search.replace(" ", "%") + "%",
+                "%" + firstname.replace(" ", "%") + "%",
+                "%" + lastname.replace(" ", "%") + "%"
+        );
+        json.recordsFiltered = (int) namePage.getTotalElements();
+        json.data = namePage.getContent();
         return json;
     }
 
