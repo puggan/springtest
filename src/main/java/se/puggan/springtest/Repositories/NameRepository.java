@@ -12,16 +12,9 @@ import java.util.List;
 @Repository
 public interface NameRepository extends PagingAndSortingRepository<Name, Integer>
 {
-    @Query(
-        value = "select n.* from name n where CONCAT(firstname, ' ', lastname) LIKE ?1 AND firstname LIKE ?2 AND lastname LIKE ?3",
-        nativeQuery = true
-    )
+    @Query("select n from Name n where firstname || ' ' || lastname LIKE %?1% AND firstname LIKE %?2% AND lastname LIKE %?3%")
     List<Name> maxSearch(String search, String firstname, String lastname);
 
-    @Query(
-        value = "select n.* from name n where CONCAT(firstname, ' ', lastname) LIKE ?1 AND firstname LIKE ?2 AND lastname LIKE ?3",
-        countQuery = "select count(*) from name n where CONCAT(firstname, ' ', lastname) LIKE ?1 AND firstname LIKE ?2 AND lastname LIKE ?3",
-        nativeQuery = true
-    )
-    Page<Name> maxSearch(Pageable var1, String search, String firstname, String lastname);
+    @Query("select n from Name n where firstname || ' ' || lastname LIKE %?1% AND firstname LIKE %?2% AND lastname LIKE %?3%")
+    Page<Name> maxSearch(Pageable p, String search, String firstname, String lastname);
 }
