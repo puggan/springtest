@@ -1,33 +1,41 @@
 package se.puggan.springtest.Controllers;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 import se.puggan.springtest.Json.DTResponse;
 import se.puggan.springtest.Models.Name;
 import se.puggan.springtest.Models.User;
 import se.puggan.springtest.Models.UserAuth;
+import se.puggan.springtest.Requests.DTRequest;
+import se.puggan.springtest.Requests.GuestRequest;
+import se.puggan.springtest.Requests.UserRequest;
 
 import javax.servlet.http.Cookie;
+import javax.validation.Valid;
 import java.util.Optional;
 
 @Controller
+@RequestScope
 @EnableAutoConfiguration
 public class Index extends Base
 {
     @RequestMapping("/logout")
     @ResponseBody
     public String logout(
-        HttpServletResponse response,
-        HttpServletRequest request
+            @ModelAttribute @Valid GuestRequest guestRequest
     )
     {
-        response.addCookie(new Cookie("session_id", ""));
-        return redirect("/", "{\"ok\": true}", response, request);
+        guestRequest.addCookie(new Cookie("session_id", ""));
+        return guestRequest.redirect("/", "{\"ok\": true}");
     }
 
     @RequestMapping("/login")
@@ -35,8 +43,7 @@ public class Index extends Base
     public String login(
         @RequestParam(defaultValue = "") String username,
         @RequestParam(defaultValue = "") String password,
-        HttpServletResponse response,
-        HttpServletRequest request
+        @ModelAttribute @Valid GuestRequest guestRequest
     )
     {
         Optional<User> ou = usersquery.byUsername(username);
@@ -48,88 +55,33 @@ public class Index extends Base
         }
         if (!ok)
         {
-            response.setStatus(403);
-            if (isAjax(request))
-            {
-                return "{\"ok\": false}";
-            }
-            return "403 Permission Denied";
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Login Failed");
         }
 
-        response.addCookie(new Cookie("session_id", "qwerty12345"));
-        return redirect("/", "{\"ok\": true}", response, request);
+        guestRequest.addCookie(new Cookie("session_id", "qwerty12345"));
+        return guestRequest.redirect("/", "{\"ok\": true}");
     }
 
     @RequestMapping("/list")
     @ResponseBody
     public DTResponse<Name> list(
-        @RequestParam(defaultValue = "0") int draw,
-        @RequestParam(defaultValue = "0") int start,
-        @RequestParam(defaultValue = "0") int length,
-        @RequestParam(name="search[value]", defaultValue = "") String search,
-        @RequestParam(name="columns[0][search][value]", defaultValue = "") String firstname,
-        @RequestParam(name="columns[1][search][value]", defaultValue = "") String lastname,
-        @RequestParam(name="order[0][column]", defaultValue = "0") int sortColumn,
-        @RequestParam(name="order[0][dir]", defaultValue = "asc") String sortOrder,
-        HttpServletResponse response,
-        HttpServletRequest request
+            @ModelAttribute @Valid DTRequest dtRequest
     )
     {
-        DTResponse<Name> json = new DTResponse<>();
-
-        //<editor-fold desc="Auth?">
-        if (guest(request))
-        {
-            response.setStatus(403);
-            json.ok = false;
-            return json;
-        }
-        //</editor-fold>
-
-        json.draw = draw;
-        json.recordsTotal = (int)namequery.count();
-
-        //<editor-fold desc="Paging and Sorting">
-        PageRequest options;
-        Sort.Direction direction = Sort.Direction.ASC;
-        if(sortOrder.equals("desc")) {
-            direction = Sort.Direction.DESC;
-        }
-        Sort sort;
-        switch (sortColumn)
-        {
-            case 1:
-                sort = Sort.by(direction, "lastname");
-
-            default:
-                sort = Sort.by(direction, "firstname");
-
-        }
-        if (length > 0)
-        {
-            options = PageRequest.of(start / length, length, sort);
-        }
-        else
-        {
-            options = PageRequest.of(0, 1 + 2*json.recordsTotal, sort);
-        }
-        //</editor-fold>
-
-        Page<Name> namePage = namequery.maxSearch(options,
-                search.replace(" ", "%"),
-                firstname.replace(" ", "%"),
-                lastname.replace(" ", "%")
-        );
-        json.recordsFiltered = (int) namePage.getTotalElements();
-        json.data = namePage.getContent();
+        DTResponse<Name> json = dtRequest.response(namequery.count());
+        json.setPage(namequery.maxSearch(dtRequest.getPagable(new String[]{"firstname", "lastname"}),
+                dtRequest.globalSearch().replace(" ", "%"),
+                dtRequest.columnSearch(0).replace(" ", "%"),
+                dtRequest.columnSearch(1).replace(" ", "%")
+        ));
         return json;
     }
-
 
     @RequestMapping("/name/{id}")
     //public String name(
     public ModelAndView name(
-        @PathVariable("id") Integer id
+        @PathVariable("id") Integer id,
+        @ModelAttribute @Valid UserRequest userRequest
     ) {
         ModelAndView view = new ModelAndView("name");
         Optional<Name> maybeName = namequery.findById(id);
