@@ -1,10 +1,6 @@
 package se.puggan.springtest.Controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,65 +11,14 @@ import se.puggan.springtest.Json.DTResponse;
 import se.puggan.springtest.Models.Name;
 import se.puggan.springtest.Models.User;
 import se.puggan.springtest.Models.UserAuth;
-import se.puggan.springtest.Repositories.NameRepository;
-import se.puggan.springtest.Repositories.UserAuthRepository;
-import se.puggan.springtest.Repositories.UserRepository;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @Controller
 @EnableAutoConfiguration
-public class Index
+public class Index extends Base
 {
-    @Autowired
-    private UserRepository usersquery;
-
-    @Autowired
-    private UserAuthRepository authquery;
-
-    @Autowired
-    private NameRepository namequery;
-
-    private boolean guest(
-        HttpServletRequest request
-    ) {
-        if (request == null)
-        {
-            return true;
-        }
-
-        for(Cookie c : request.getCookies())
-        {
-            if(c.getName().equals("session_id")) {
-                return !c.getValue().equals("qwerty12345");
-            }
-        }
-
-        return true;
-    }
-
-    private boolean isAjax(
-        HttpServletRequest request
-    ) {
-        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
-    }
-
-    private String redirect(
-        String url,
-        String content,
-        HttpServletResponse response,
-        HttpServletRequest request
-    ) {
-        if(!isAjax(request)) {
-            response.setStatus(302);
-            response.addHeader("Location", url);
-        }
-        return content;
-    }
-
     @RequestMapping("/logout")
     @ResponseBody
     public String logout(
