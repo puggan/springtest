@@ -171,9 +171,9 @@ public class Index
         //</editor-fold>
 
         Page<Name> namePage = namequery.maxSearch(options,
-                "%" + search.replace(" ", "%") + "%",
-                "%" + firstname.replace(" ", "%") + "%",
-                "%" + lastname.replace(" ", "%") + "%"
+                search.replace(" ", "%"),
+                firstname.replace(" ", "%"),
+                lastname.replace(" ", "%")
         );
         json.recordsFiltered = (int) namePage.getTotalElements();
         json.data = namePage.getContent();
